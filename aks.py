@@ -38,12 +38,16 @@ api_instance.create_namespaced_deployment(
     body=deployment
 )
 
-# Define the service
+# Define the service with LoadBalancer type
 service = client.V1Service(
     metadata=client.V1ObjectMeta(name="my-flask-service"),
     spec=client.V1ServiceSpec(
         selector={"app": "my-flask-app"},
-        ports=[client.V1ServicePort(port=5000)]
+        ports=[client.V1ServicePort(
+            port=5000,           
+            target_port=5000     
+        )],
+        type="LoadBalancer"      
     )
 )
 
