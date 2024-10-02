@@ -9,7 +9,7 @@
     4. Docker Commands
 4. Create ACR repository and push Docker Image to ACR
 5. Create AKS cluster and Nodegroups
-6. Create Kubernetes Deployments and Services using Python!
+6. Create Kubernetes Deployments and Services using Python
 
 
 ## **Prerequisites** !
@@ -221,3 +221,6 @@ Once your pod is up and running, run the port-forward to expose the service
 ```bash
 kubectl port-forward service/<service_name> 5000:5000
 ```
+
+
+![System_Monitoring](https://github.com/user-attachments/assets/325c9009-1510-47bd-a574-992fa3ed50cd)
