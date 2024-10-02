@@ -1,6 +1,4 @@
-# **Cloud Native Resource Monitoring Python App on K8s!**
-
-## Things you will Learn 🤯
+# **Cloud Native Resource Monitoring Python App on K8susing AKS!**
 
 1. Python and How to create Monitoring Application in Python using Flask and psutil
 2. How to run a Python App locally.
@@ -9,26 +7,21 @@
     2. Building DockerImage
     3. Running Docker Container
     4. Docker Commands
-4. Create ECR repository using Python Boto3 and pushing Docker Image to ECR
-5. Learn Kubernetes and Create EKS cluster and Nodegroups
+4. Create ACR repository and push Docker Image to ACR
+5. Create AKS cluster and Nodegroups
 6. Create Kubernetes Deployments and Services using Python!
-
-# **Youtube Video for step by step Demonstration!**
-
-[![Video Tutorial](https://img.youtube.com/vi/kBWCsHEcWnc/0.jpg)](https://youtu.be/kBWCsHEcWnc)
 
 
 ## **Prerequisites** !
 
 (Things to have before starting the projects)
 
-- [x]  AWS Account.
-- [x]  Programmatic access and AWS configured with CLI.
+- [x]  AZURE Account.
+- [x]  Programmatic access and Azure configured with CLI.
 - [x]  Python3 Installed.
 - [x]  Docker and Kubectl installed.
 - [x]  Code editor (Vscode)
 
-# ✨Let’s Start the Project ✨
 
 ## **Part 1: Deploying the Flask application locally**
 
@@ -107,48 +100,49 @@ docker run -p 5000:5000 <image_name>
 
 This will start the Flask server in a Docker container on **`localhost:5000`**. Navigate to [http://localhost:5000/](http://localhost:5000/) on your browser to access the application.
 
-## **Part 3: Pushing the Docker image to ECR**
+## **Part 3: Pushing the Docker image to ACR**
 
-### **Step 1: Create an ECR repository**
+### **Step 1: Create an ACR repository**
 
-Create an ECR repository using Python:
-
-```
-import boto3
-
-# Create an ECR client
-ecr_client = boto3.client('ecr')
-
-# Create a new ECR repository
-repository_name = 'my-ecr-repo'
-response = ecr_client.create_repository(repositoryName=repository_name)
-
-# Print the repository URI
-repository_uri = response['repository']['repositoryUri']
-print(repository_uri)
-```
-
-### **Step 2: Push the Docker image to ECR**
-
-Push the Docker image to ECR using the push commands on the console:
+Create an ACR repository:
 
 ```
-docker push <ecr_repo_uri>:<tag>
+az acr create --resource-group <resource_grp_name> --name <acr_name> --sku Basic
+
+az acr login --name <acr_name>
 ```
 
-## **Part 4: Creating an EKS cluster and deploying the app using Python**
+### **Step 2: Push the Docker image to ACR**
 
-### **Step 1: Create an EKS cluster**
+Tag and Push the Docker image to ACR using the push commands on the console:
 
-Create an EKS cluster and add node group
+```
+docker tag <image-name> <acr_name>.azurecr.io/<image-name>
+docker push <image-name>.azurecr.io/<image-name>
+```
 
-### **Step 2: Create a node group**
+## **Part 4: Creating an AKS cluster and deploying the app using Python**
+
+### **Step 1: Create an AKS cluster**
+
+Create an AKS cluster and add node group
+
+```
+az aks create --resource-group <resource_group> --name <aks-name> --node-count 1 --enable-addons monitoring --ssh-key-value <key-path> --service-principal <sp_id> --client-secret <sp_client_secret>
+
+```
+
+### **Step 2: Configure kubectl to use your AKS cluster**
 
 Create a node group in the EKS cluster.
 
+```
+az aks get-credentials --resource-group <resource-grp> --name <aks-name>
+```
+
 ### **Step 3: Create deployment and service**
 
-```jsx
+```
 from kubernetes import client, config
 
 # Load Kubernetes configuration
@@ -173,7 +167,7 @@ deployment = client.V1Deployment(
                 containers=[
                     client.V1Container(
                         name="my-flask-container",
-                        image="568373317874.dkr.ecr.us-east-1.amazonaws.com/my-cloud-native-repo:latest",
+                        image="<acr-name>.azurecr.io/<image-name>",
                         ports=[client.V1ContainerPort(container_port=5000)]
                     )
                 ]
@@ -206,12 +200,12 @@ api_instance.create_namespaced_service(
 )
 ```
 
-make sure to edit the name of the image on line 25 with your image Uri.
+*** make sure to edit the name of the image with your image Uri.
 
-- Once you run this file by running “python3 eks.py” deployment and service will be created.
+- Once you run this file by running “python3 aks.py” deployment and service will be created.
 - Check by running following commands:
 
-```jsx
+```
 kubectl get deployment -n default (check deployments)
 kubectl get service -n default (check service)
 kubectl get pods -n default (to check the pods)
