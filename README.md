@@ -220,7 +220,11 @@ Once your pod is up and running, run the port-forward to expose the service
 
 ```bash
 kubectl port-forward service/<service_name> 5000:5000
-```
 
+kubectl get services (get external ip)
+
+http://<external-ip>:5000
+```
+You can now access the app via http://<external-ip>:5000
 
 ![System_Monitoring](https://github.com/user-attachments/assets/325c9009-1510-47bd-a574-992fa3ed50cd)
