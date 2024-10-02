@@ -1,4 +1,4 @@
-# **Cloud Native Resource Monitoring Python App on K8susing AKS!**
+# **Cloud Native Resource Monitoring Python App on K8s using AKS!**
 
 1. Python and How to create Monitoring Application in Python using Flask and psutil
 2. How to run a Python App locally.
@@ -167,7 +167,7 @@ deployment = client.V1Deployment(
                 containers=[
                     client.V1Container(
                         name="my-flask-container",
-                        image="<acr-name>.azurecr.io/<image-name>",
+                        image="acr2201.azurecr.io/cloud-native:v1",
                         ports=[client.V1ContainerPort(container_port=5000)]
                     )
                 ]
@@ -183,12 +183,16 @@ api_instance.create_namespaced_deployment(
     body=deployment
 )
 
-# Define the service
+# Define the service with LoadBalancer type
 service = client.V1Service(
     metadata=client.V1ObjectMeta(name="my-flask-service"),
     spec=client.V1ServiceSpec(
         selector={"app": "my-flask-app"},
-        ports=[client.V1ServicePort(port=5000)]
+        ports=[client.V1ServicePort(
+            port=5000,           
+            target_port=5000     
+        )],
+        type="LoadBalancer"      
     )
 )
 
@@ -198,6 +202,7 @@ api_instance.create_namespaced_service(
     namespace="default",
     body=service
 )
+
 ```
 
 *** make sure to edit the name of the image with your image Uri.
