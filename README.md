@@ -167,7 +167,7 @@ deployment = client.V1Deployment(
                 containers=[
                     client.V1Container(
                         name="my-flask-container",
-                        image="acr2201.azurecr.io/cloud-native:v1",
+                        image="<acr-name>.azurecr.io/cloud-native:v1",
                         ports=[client.V1ContainerPort(container_port=5000)]
                     )
                 ]
